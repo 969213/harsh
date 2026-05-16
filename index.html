@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harshu Education Portal - Secure Admin v2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --light-bg: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: #333;
+        }
+
+        /* --- NAV BAR --- */
+        nav {
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Dropdown Style */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropbtn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            right: 0;
+        }
+
+        .dropdown-content button {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .dropdown-content button:hover {
+            background-color: #f1f1f1;
+            color: var(--accent-color);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .admin-btn {
+            background: transparent;
+            border: 2px solid #fff;
+            padding: 8px 15px;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .admin-btn:hover {
+            background: #fff;
+            color: var(--primary-color);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 45px;
+            margin-bottom: 20px;
+        }
+
+        /* --- MODAL / LOGIN POPUP --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* --- PANELS --- */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            display: none;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .active-panel {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .card h3 { color: #666; font-size: 14px; text-transform: uppercase;}
+        .card p { font-size: 32px; font-weight: bold; margin-top: 10px; color: var(--primary-color);}
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .remove-btn {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* --- FOOTER / CONTACT --- */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+        }
+
+        .contact-item a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .contact-item a:hover { color: var(--accent-color); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i> HARSHU<span>.</span>
+        </div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <div class="dropdown">
+                <button class="dropbtn"><i class="fa-solid fa-book"></i> Study Material</button>
+                <div class="dropdown-content">
+                    <button onclick="checkAccess('python')"><i class="fa-brands fa-python"></i> Python</button>
+                    <button onclick="checkAccess('iot')"><i class="fa-solid fa-microchip"></i> IoT</button>
+                </div>
+            </div>
+            <button class="admin-btn" onclick="openModal('admin')">Admin Panel</button>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Welcome to Harshu Secure Education Hub</h1>
+        <p>A completely protected environment for learning Python & IoT</p>
+    </div>
+
+    <div id="adminPanel" class="container">
+        <h2><i class="fa-solid fa-user-shield"></i> Admin Dashboard</h2>
+        <hr><br>
+        <div class="dashboard-grid">
+            <div class="card" style="border-left-color: var(--success-color);">
+                <h3>Total Page Visits</h3>
+                <p id="visitCount">0</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-color);">
+                <h3>Authorized Students</h3>
+                <p id="studentCount">1</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top:30px;">Create New Student Account (ID/Pass)</h3>
+        <p style="font-size: 13px; color: #666; margin-top: 5px;">*Naya user add karne par automatic email confirmation generate hoga.</p>
+        <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+            <input type="email" id="newUsername" placeholder="Enter Student Email" style="padding:10px; border:1px solid #ccc; border-radius:5px; flex:1;">
+            <input type="text" id="newPassword" placeholder="Enter Student Password" style="padding:10px; border:1px solid #ccc; border-radius:5px; flex:1;">
+            <button onclick="createStudent()" class="submit-btn" style="width:auto; padding: 10px 20px;"><i class="fa-solid fa-user-plus"></i> Add User</button>
+        </div>
+
+        <h3 style="margin-top:30px;">Active Credentials Users</h3>
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>Username / Email</th>
+                    <th>Password</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Login Required</h2>
+            <div class="form-group">
+                <label for="uid">Username / Email</label>
+                <input type="text" id="uid" placeholder="Enter your ID">
+            </div>
+            <div class="form-group">
+                <label for="pass">Password</label>
+                <input type="password" id="pass" placeholder="Enter Password">
+            </div>
+            <button class="submit-btn" onclick="handleLogin()">Verify & Login</button>
+        </div>
+    </div>
+
+    <footer>
+        <h3>Contact Us</h3>
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fa-solid fa-envelope" style="color: var(--accent-color);"></i>
+                <a href="mailto:mbhola099@gmail.com">mbhola099@gmail.com</a>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-phone" style="color: var(--success-color);"></i>
+                <a href="tel:8114247911">+91 8114247911</a>
+            </div>
+        </div>
+        <p style="margin-top: 30px; font-size: 14px; opacity: 0.7;">&copy; 2026 Harshu Education. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const ADMIN_USER = "Panditain@gmail.com";
+        const ADMIN_PASS = "Madamji143";
+        
+        if (!localStorage.getItem('students')) {
+            const initialStudents = [
+                { uid: "student@gmail.com", pass: "student123" }
+            ];
+            localStorage.setItem('students', JSON.stringify(initialStudents));
+        }
+
+        // Visitor Tracker
+        let visits = localStorage.getItem('page_view');
+        if (visits) {
+            visits = parseInt(visits) + 1;
+            localStorage.setItem('page_view', visits);
+        } else {
+            visits = 1;
+            localStorage.setItem('page_view', 1);
+        }
+        document.getElementById('visitCount').innerText = visits;
+
+        let currentRole = null; 
+        let pendingTargetFile = null; 
+        let currentModalMode = ''; 
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateUserTable();
+        });
+
+        function openModal(mode, targetFile = null) {
+            currentModalMode = mode;
+            pendingTargetFile = targetFile;
+            if(mode === 'admin') {
+                document.getElementById('modalTitle').innerText = "Admin Portal Verification";
+            } else {
+                document.getElementById('modalTitle').innerText = "Student Authentication";
+            }
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('uid').value = '';
+            document.getElementById('pass').value = '';
+        }
+
+        function handleLogin() {
+            const enteredUid = document.getElementById('uid').value;
+            const enteredPass = document.getElementById('pass').value;
+
+            if (currentModalMode === 'admin') {
+                if (enteredUid === ADMIN_USER && enteredPass === ADMIN_PASS) {
+                    currentRole = 'admin';
+                    document.getElementById('adminPanel').classList.add('active-panel');
+                    closeModal();
+                    alert("Admin Access Granted Successfully!");
+                    window.scrollTo({top: document.getElementById('adminPanel').offsetTop - 100, behavior: 'smooth'});
+                } else {
+                    alert("Invalid Admin Credentials! Access Denied.");
+                }
+            } else if (currentModalMode === 'student') {
+                const students = JSON.parse(localStorage.getItem('students'));
+                const isValidStudent = students.some(s => s.uid === enteredUid && s.pass === enteredPass);
+
+                if (isValidStudent || (enteredUid === ADMIN_USER && enteredPass === ADMIN_PASS)) {
+                    closeModal();
+                    alert("Authentication Successful! Opening File...");
+                    if (pendingTargetFile === 'python') {
+                        window.location.href = "python.html"; 
+                    } else if (pendingTargetFile === 'iot') {
+                        window.location.href = "iot.html";
+                    }
+                } else {
+                    alert("Access Denied! You do not have permission or valid ID/Password.");
+                }
+            }
+        }
+
+        function checkAccess(fileType) {
+            openModal('student', fileType);
+        }
+
+        // --- NEW: Email Trigger Logic ---
+        function sendEmailNotification(studentEmail, subject, bodyMessage) {
+            const mailtoUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(studentEmail)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyMessage)}`;
+            window.open(mailtoUrl, '_blank');
+        }
+
+        // --- UPDATE: Create Student & Trigger Email ---
+        function createStudent() {
+            const newUid = document.getElementById('newUsername').value.trim();
+            const newPass = document.getElementById('newPassword').value.trim();
+
+            if(!newUid || !newPass) {
+                alert("Please fill both Email and Password fields.");
+                return;
+            }
+
+            let students = JSON.parse(localStorage.getItem('students'));
+            
+            if(students.some(s => s.uid === newUid) || newUid === ADMIN_USER) {
+                alert("This Email/ID already exists.");
+                return;
+            }
+
+            students.push({ uid: newUid, pass: newPass });
+            localStorage.setItem('students', JSON.stringify(students));
+            
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPassword').value = '';
+            
+            updateUserTable();
+            alert(`User added! Opening Gmail to send credentials verification to ${newUid}`);
+            
+            // Email configuration for Addition
+            const subject = "Harshu Portal - Account Activated Successfully";
+            const body = `Hello Student,\n\nYour account has been successfully created by the Admin on Harshu Secure Portal.\n\nYou can now log in and access your study materials.\n\nYour Login Credentials:\nUsername/Email: ${newUid}\nPassword: ${newPass}\n\nRegards,\nAdmin Support Portal`;
+            
+            sendEmailNotification(newUid, subject, body);
+        }
+
+        // --- NEW: Remove Student Functionality & Trigger Email ---
+        function removeStudent(email) {
+            if (confirm(`Are you sure you want to remove access for: ${email}?`)) {
+                let students = JSON.parse(localStorage.getItem('students'));
+                
+                // Filtering out the deleted student
+                students = students.filter(s => s.uid !== email);
+                localStorage.setItem('students', JSON.stringify(students));
+                
+                updateUserTable();
+                alert(`User removed! Opening Gmail to send Account Deactivation alert to ${email}`);
+                
+                // Email configuration for Removal
+                const subject = "Harshu Portal - Account Revoked Notice";
+                const body = `Important Notification,\n\nYour access permission for Harshu Study Portal (Python/IoT files) has been officially removed or expired by the Administrator.\n\nYou will no longer be able to view the secured materials.\n\nIf you believe this is an error, please contact the support team.\n\nRegards,\nAdmin Support Portal`;
+                
+                sendEmailNotification(email, subject, body);
+            }
+        }
+
+        function updateUserTable() {
+            const students = JSON.parse(localStorage.getItem('students'));
+            document.getElementById('studentCount').innerText = students.length;
+
+            const tbody = document.querySelector("#userTable tbody");
+            tbody.innerHTML = `
+                <tr>
+                    <td>${ADMIN_USER}</td>
+                    <td>•••••••• (Protected)</td>
+                    <td><strong>Super Admin</strong></td>
+                    <td><span style="color:#aaa; font-style:italic;">Not Removable</span></td>
+                </tr>
+            `;
+
+            students.forEach(s => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${s.uid}</td>
+                        <td>${s.pass}</td>
+                        <td>Student Access</td>
+                        <td>
+                            <button class="remove-btn" onclick="removeStudent('${s.uid}')">
+                                <i class="fa-solid fa-user-minus"></i> Remove
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
